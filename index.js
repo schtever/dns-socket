@@ -187,7 +187,7 @@ DNS.prototype.setRetries = function (id, retries) {
   }
 }
 
-DNS.prototype.query = function (query, port, host, cb) {
+DNS.prototype.query = function (query, port, host, cb, signcb) {
   if (typeof host === 'function') return this.query(query, port, null, host)
   if (!cb) cb = noop
 
@@ -205,6 +205,10 @@ DNS.prototype.query = function (query, port, host, cb) {
   let i = this._ids.indexOf(0)
   if (i === -1) i = this._ids.push(0) - 1
   if (this._queries.length === i) this._queries.push(null)
+
+  if (signcb) {
+    signcb(query)
+  }
 
   const buffer = packet.encode(query)
   const tries = this._triesArray.slice(0)
